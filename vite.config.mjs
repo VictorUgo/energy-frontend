@@ -16,7 +16,7 @@ export default defineConfig({
     open: true,
     host: true
   },
-  base: '/free/', // <- MUY IMPORTANTE
+  base: '/', // <- MUY IMPORTANTE
   define: {
     global: 'window'
   }
