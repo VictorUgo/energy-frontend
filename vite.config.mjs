@@ -10,13 +10,21 @@ export default defineConfig({
   server: {
     open: true,
     port: 3000,
-    host: true
+    host: true,
+    proxy: {
+      '/api': {
+        target: 'http://54.197.26.52:4002', // Tu backend en EC2
+        changeOrigin: true,
+        secure: false, // importante para evitar errores con certificados no válidos
+        rewrite: (path) => path.replace(/^\/api/, '/api') // mantiene el path
+      }
+    }
   },
   preview: {
     open: true,
     host: true
   },
-  base: '/', // <- MUY IMPORTANTE
+  base: '/',
   define: {
     global: 'window'
   }
