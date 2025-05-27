@@ -27,7 +27,7 @@ export default function AuthLogin() {
 
   const handleLogin = async () => {
     try {
-      const res = await axios.post('http://54.197.26.52:4002/api/auth/login', {
+      const res = await axios.post('https://vvh.life//api/auth/login', {
         username: email,
         password
       });

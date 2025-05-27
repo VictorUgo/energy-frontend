@@ -13,7 +13,7 @@ export default defineConfig({
     host: true,
     proxy: {
       '/api': {
-        target: 'http://54.197.26.52:4002', // Tu backend en EC2
+        target: 'https://vvh.life/', // Tu backend en EC2
         changeOrigin: true,
         secure: false, // importante para evitar errores con certificados no válidos
         rewrite: (path) => path.replace(/^\/api/, '/api') // mantiene el path

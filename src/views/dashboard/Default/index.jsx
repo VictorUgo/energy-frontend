@@ -52,7 +52,7 @@ export default function Dashboard() {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get('http://54.197.26.52:4002/api/data', {
+        const response = await axios.get('https://vvh.life//api/data', {
           headers: { Authorization: `Bearer ${token}` }
         });
 
@@ -72,7 +72,7 @@ export default function Dashboard() {
     const fetchStats = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get('http://54.197.26.52:4002/api/data/stats', {
+        const response = await axios.get('https://vvh.life//api/data/stats', {
           headers: { Authorization: `Bearer ${token}` },
           params: { groupBy: 'Sensor ID' }
         });
