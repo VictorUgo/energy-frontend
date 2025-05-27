@@ -27,9 +27,9 @@ export default function AuthLogin() {
 
   const handleLogin = async () => {
     try {
-      const res = await axios.post('https://vvh.life//api/auth/login', {
+      const res = await axios.post(`${import.meta.env.VITE_API_URL}auth/login`, {
         username: email,
-        password
+        password: password
       });
 
       localStorage.setItem('token', res.data.token);

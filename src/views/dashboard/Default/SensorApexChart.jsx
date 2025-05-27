@@ -10,7 +10,8 @@ export default function SensorApexChart({ selectedSensorId, selectedArea, fechaI
     const fetchFilteredData = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get('https://vvh.life//api/data/filtered', {
+        
+        const response = await axios.get(`${import.meta.env.VITE_API_URL}api/data/filtered`, {
           headers: { Authorization: `Bearer ${token}` },
           params: {
             sensor: selectedSensorId || undefined,

@@ -38,7 +38,6 @@ export default function Dashboard() {
     if (!token) navigate('/pages/login');
   }, [navigate]);
 
-
   const menuProps = {
     PaperProps: {
       style: {
@@ -52,7 +51,7 @@ export default function Dashboard() {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get('https://vvh.life//api/data', {
+        const response = await axios.post(`${import.meta.env.VITE_API_URL}api/data`, {
           headers: { Authorization: `Bearer ${token}` }
         });
 
@@ -72,7 +71,7 @@ export default function Dashboard() {
     const fetchStats = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get('https://vvh.life//api/data/stats', {
+        const response = await axios.post(`${import.meta.env.VITE_API_URL}api/data/stats`, {
           headers: { Authorization: `Bearer ${token}` },
           params: { groupBy: 'Sensor ID' }
         });
@@ -182,9 +181,15 @@ export default function Dashboard() {
             <Table size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell><strong>Sensor</strong></TableCell>
-                  <TableCell><strong>Promedio Voltaje (V)</strong></TableCell>
-                  <TableCell><strong>Promedio Corriente (A)</strong></TableCell>
+                  <TableCell>
+                    <strong>Sensor</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Promedio Voltaje (V)</strong>
+                  </TableCell>
+                  <TableCell>
+                    <strong>Promedio Corriente (A)</strong>
+                  </TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
