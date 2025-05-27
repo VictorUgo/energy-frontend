@@ -1,194 +1,195 @@
-# energy-backend
-
 Energy Monitoring Platform
-
-✨ Descripción General
 
 Una plataforma de monitoreo energético para visualizar, filtrar y analizar datos de consumo eléctrico en tiempo real e histórico, segmentado por centro de trabajo, sensor y área.
 
-El sistema incluye autenticación de usuario y está diseñado para desplegarse en la nube.
+✨ Descripción General
+
+La plataforma permite a los usuarios monitorear el comportamiento eléctrico de tres centros de trabajo mediante sensores distribuidos por áreas. Las lecturas incluyen voltaje y corriente cada 15 minutos.
+
+El sistema incluye:
+
+Visualización de datos en tiempo real
+
+Filtrado por sensor, área y fechas
+
+Cálculo de estadísticas
+
+Autenticación JWT
+
+Despliegue en la nube
+
+📌 Objetivo del Proyecto
+
+Desarrollar una plataforma de monitoreo energético que utilice datos de consumo energético para tres centros de trabajo, distribuidos en diferentes áreas y con varios sensores por centro. La plataforma debe mostrar el voltaje y la corriente en tiempo real por sensor, permitir la visualización eficiente de los datos, filtrar por centro, sensor, área y fechas, y desplegarse completamente en la nube.
 
 ⚖️ Arquitectura
 
-Tecnologías:
+Tecnologías Utilizadas:
 
-Frontend: React (con Material UI y ApexCharts)
+Frontend: React + Vite + Material UI + ApexCharts
 
-Backend: Node.js (Express.js)
+Backend: Node.js + Express.js
 
 Autenticación: JWT
 
-Fuente de datos: Archivo JSON simulado
+Fuente de Datos: Archivo JSON local (simulado)
 
-Estructura General:
+Estructura General
 
 energy-monitor/
-├── frontend/ (React + Vite + ApexCharts)
-└── backend/ (Node.js + Express)
+├── frontend/    # React (Vite)
+└── backend/     # Node.js (Express)
 
-Flujo de Datos:
+Flujo de Datos
 
-El backend lee un archivo JSON que simula los datos de sensores.
+El backend lee un archivo data.json con lecturas de sensores.
 
-Provee endpoints protegidos por JWT:
+Expone las siguientes rutas:
 
-/api/data - Todos los datos
+GET /api/data - Todos los datos
 
-/api/data/realtime - Datos últimos por sensor
+GET /api/data/realtime - Última lectura por sensor
 
-/api/data/filtered - Filtrado por sensor, área, fechaInicio, fechaFin
+GET /api/data/filtered - Filtrado por sensor, área, fechaInicio y fechaFin
 
-/api/data/stats - Promedios por sensor o área
+GET /api/data/stats - Promedios por sensor o área
 
-El frontend consume estas APIs, mostrando:
+El frontend consume estas rutas y muestra:
 
-Gráficas interactivas de voltaje y corriente
+Gráficas interactivas
 
-Filtros por sensor, área, rango de fechas
+Filtros por sensor, área, fechas
+
+Estadísticas en tabla
 
 🚪 Autenticación
 
-Middleware authMiddleware.js
+Middleware: authMiddleware.js
 
-Valida JWT en encabezado Authorization
+Verifica el token JWT enviado en Authorization: Bearer <token>
 
-Requiere token para acceder a cualquier ruta /api/data/*
+Protege todas las rutas que comienzan con /api/data/*
 
 🔍 Funcionalidades
 
-Backend
+Backend:
 
-Lectura de archivo JSON como fuente de datos
+Lectura de archivo JSON
 
-Filtrado por centro, sensor, área y fechas
+Filtro por centro, sensor, área, fechas
 
-Datos en tiempo real (más reciente por sensor)
+Datos en tiempo real (por sensor)
 
-Cálculo de promedios de voltaje y corriente
+Promedios de voltaje y corriente
 
-Frontend
+Frontend:
 
-Login protegido con token
+Login con protección de token
 
-Dashboard con:
+Dashboard:
 
 Cards resumen
 
 Filtros de búsqueda
 
 Gráficas interactivas con ApexCharts
+
+Tabla con promedios
+
+🚜 Segregación de Datos por Centro
+
+Actualmente todos los datos están disponibles globalmente. Sin embargo, el sistema está preparado para restringir accesos por centro según el usuario autenticado mediante el token JWT. Esta funcionalidad puede extenderse fácilmente si se desea controlar el acceso por centro de trabajo.
 
 🚀 Despliegue
 
-Opcion 1: Railway (recomendado)
+Backend (AWS EC2 - Ubuntu):
 
-Backend desplegado con Railway, configurando JWT_SECRET como variable de entorno
+Conectarse vía SSH a la instancia EC2.
 
-Frontend construido con npm run build y desplegado en Vercel o Netlify
+Instalar Node.js y Git.
 
-Opcion 2: Render
+Clonar el repositorio y entrar al proyecto:
 
-Crear servicios web para backend y frontend con sus respectivos repositorios
+git clone https://github.com/VictorUgo/energy-backend.git
+cd energy-backend
 
-📚Energy Monitoring Platform
+Instalar dependencias:
 
-✨ Descripción General
+npm install
 
-Una plataforma de monitoreo energético para visualizar, filtrar y analizar datos de consumo eléctrico en tiempo real e histórico, segmentado por centro de trabajo, sensor y área.
+Crear archivo .env con:
 
-El sistema incluye autenticación de usuario y está diseñado para desplegarse en la nube.
+JWT_SECRET=tu_clave_secreta
 
-⚖️ Arquitectura
+Ejecutar:
 
-Tecnologías:
+node server.js
 
-Frontend: React (con Material UI y ApexCharts)
+(o con PM2 para modo background)
 
-Backend: Node.js (Express.js)
+npm install -g pm2
+pm2 start server.js --name energy-backend
 
-Autenticación: JWT
+Asegurar el puerto 4002 en el grupo de seguridad EC2.
 
-Fuente de datos: Archivo JSON simulado
+Frontend (Vercel):
 
-Estructura General:
+Clonar el repositorio:
 
-energy-monitor/
-├── frontend/ (React + Vite + ApexCharts)
-└── backend/ (Node.js + Express)
+git clone https://github.com/VictorUgo/energy-frontend.git
+cd energy-frontend
 
-Flujo de Datos:
+Crear archivo .env con:
 
-El backend lee un archivo JSON que simula los datos de sensores.
+VITE_API_URL=https://<tu-backend-en-ec2>
 
-Provee endpoints protegidos por JWT:
+Ejecutar en desarrollo:
 
-/api/data - Todos los datos
+npm install
+npm run dev
 
-/api/data/realtime - Datos últimos por sensor
+Para producción:
 
-/api/data/filtered - Filtrado por sensor, área, fechaInicio, fechaFin
+Subir a GitHub
 
-/api/data/stats - Promedios por sensor o área
+Conectar Vercel con GitHub
 
-El frontend consume estas APIs, mostrando:
+Agregar variables de entorno en configuración de Vercel
 
-Gráficas interactivas de voltaje y corriente
+Vercel desplegará automáticamente desde la rama principal
 
-Filtros por sensor, área, rango de fechas
+🔗 URLs
 
-🚪 Autenticación
-
-Middleware authMiddleware.js
-
-Valida JWT en encabezado Authorization
-
-Requiere token para acceder a cualquier ruta /api/data/*
-
-🔍 Funcionalidades
-
-Backend
-
-Lectura de archivo JSON como fuente de datos
-
-Filtrado por centro, sensor, área y fechas
-
-Datos en tiempo real (más reciente por sensor)
-
-Cálculo de promedios de voltaje y corriente
-
-Frontend
-
-Login protegido con token
-
-Dashboard con:
-
-Cards resumen
-
-Filtros de búsqueda
-
-Gráficas interactivas con ApexCharts
-
-🚜 Segregación de datos por centro
-
-Aunque actualmente todos los datos están disponibles globalmente, se puede extender la autenticación JWT para incluir centros permitidos por usuario.
-
-🌐 URL de despliegue:
-
-Backend: https://energy-monitor-backend.onrender.com
+Backend: https://
 
 Frontend: https://energy-monitor-frontend.vercel.app
 
-🔢 Buenas Prácticas
+Repositorio Frontend: https://github.com/VictorUgo/energy-frontend
 
-Modularización clara (routes, controllers, utils, middleware)
+Repositorio Backend: https://github.com/VictorUgo/energy-backend
 
-Validación de parámetros y errores HTTP
+📄 Buenas Prácticas
 
-Autenticación protegida con JWT
+Modularización de código (routes, controllers, utils, middleware)
 
-Uso de MUI + ApexCharts para UX limpia y visual
+Validación de errores y parámetros
+
+Protección de rutas con JWT
+
+Interfaz limpia con Material UI y ApexCharts
+
+📝 Criterios de Evaluación
+
+✅ Funcionalidad y Completitud: Todas las funciones requeridas están implementadas.
+
+✅ Calidad del Código: Estructura modular, buenas prácticas y comentarios claros.
+
+✅ Frontend Atractivo: Navegación fluida, filtros claros y diseño limpio.
+
+✅ Despliegue Correcto: Backend y frontend accesibles en la nube.
+
+✅ Documentación Clara: Instrucciones de uso, despliegue y contexto técnico completo.
 
 💼 Autor
 
-Victor HernandezDesarrollador Full Stack
-
+Victor HernandezDesarrollador Full StackLinkedIn

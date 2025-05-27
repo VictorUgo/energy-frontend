@@ -3,7 +3,6 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import Grid from '@mui/material/Grid2';
 import {
-  Box,
   FormControl,
   InputLabel,
   MenuItem,
@@ -25,6 +24,7 @@ import SensorApexChart from './SensorApexChart';
 export default function Dashboard() {
   const navigate = useNavigate();
 
+  // --------- Estados ---------
   const [sensorList, setSensorList] = useState([]);
   const [selectedSensorId, setSelectedSensorId] = useState('');
   const [fechaInicio, setFechaInicio] = useState('');
@@ -33,49 +33,51 @@ export default function Dashboard() {
   const [selectedArea, setSelectedArea] = useState('');
   const [stats, setStats] = useState([]);
 
+  // --------- Redirección si no hay token ---------
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) navigate('/pages/login');
   }, [navigate]);
 
+  // --------- Opciones del menú desplegable ---------
   const menuProps = {
     PaperProps: {
       style: {
         maxHeight: 300,
-        width: 250
+        width: 300
       }
     }
   };
 
+  // --------- Cargar sensores y áreas ---------
   useEffect(() => {
     const fetchData = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/data`, {
+        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/data`, {
           headers: { Authorization: `Bearer ${token}` }
         });
 
-        const sensoresUnicos = [...new Set(response.data.map((d) => d['Sensor ID']))];
-        setSensorList(sensoresUnicos);
-        const areasUnicas = [...new Set(response.data.map((d) => d['Área']))];
-        setAreaList(areasUnicas);
+        setSensorList([...new Set(data.map((d) => d['Sensor ID']))]);
+        setAreaList([...new Set(data.map((d) => d['Área']))]);
       } catch (error) {
-        console.error('Error al obtener sensores:', error);
+        console.error('Error al obtener sensores/áreas:', error);
       }
     };
 
     fetchData();
   }, []);
 
+  // --------- Cargar estadísticas ---------
   useEffect(() => {
     const fetchStats = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/api/data/stats`, {
+        const { data } = await axios.get(`${import.meta.env.VITE_API_URL}/api/data/stats`, {
           headers: { Authorization: `Bearer ${token}` },
           params: { groupBy: 'Sensor ID' }
         });
-        setStats(response.data);
+        setStats(data);
       } catch (error) {
         console.error('Error al obtener estadísticas:', error);
       }
@@ -86,26 +88,34 @@ export default function Dashboard() {
 
   return (
     <Grid container spacing={gridSpacing}>
-      {/* Card de Filtros */}
+      {/* ---------- Card de Filtros ---------- */}
       <Grid item xs={12}>
-        <Card sx={{ p: 3, borderRadius: 3, boxShadow: 3 }}>
-          <Typography variant="h5" sx={{ mb: 3 }}>
-            Monitoreo Energético - Datos Históricos
+        <Card sx={{ p: 4, borderRadius: 3, boxShadow: 4 }}>
+          <Typography variant="h5" sx={{ mb: 4 }}>
+            Monitoreo Energético – Filtros
           </Typography>
 
-          <Grid container spacing={2}>
-            <Grid xs={12} sm={6} md={6}>
+          <Grid container spacing={3}>
+            {/* --- Select Sensor --- */}
+            <Grid item xs={12} md={6}>
               <FormControl fullWidth>
-                <InputLabel id="sensor-label">Sensor</InputLabel>
+                <InputLabel id="sensor-label" sx={{ fontSize: '1.1rem' }}>
+                  Sensor
+                </InputLabel>
                 <Select
                   labelId="sensor-label"
                   value={selectedSensorId}
-                  label="Sensor"
                   onChange={(e) => setSelectedSensorId(e.target.value)}
+                  displayEmpty
+                  renderValue={(v) => v || <em>Selecciona un sensor</em>}
                   MenuProps={menuProps}
+                  sx={{ height: 56, fontSize: '1rem' }}
                 >
+                  <MenuItem disabled value="">
+                    <em>Selecciona un sensor</em>
+                  </MenuItem>
                   {sensorList.map((sensor) => (
-                    <MenuItem key={sensor} value={sensor}>
+                    <MenuItem key={sensor} value={sensor} sx={{ fontSize: '1rem' }}>
                       {sensor}
                     </MenuItem>
                   ))}
@@ -113,18 +123,26 @@ export default function Dashboard() {
               </FormControl>
             </Grid>
 
-            <Grid xs={12} sm={6} md={6}>
+            {/* --- Select Área --- */}
+            <Grid item xs={12} md={6}>
               <FormControl fullWidth>
-                <InputLabel id="area-label">Área</InputLabel>
+                <InputLabel id="area-label" sx={{ fontSize: '1.1rem' }}>
+                  Área
+                </InputLabel>
                 <Select
                   labelId="area-label"
                   value={selectedArea}
-                  label="Área"
                   onChange={(e) => setSelectedArea(e.target.value)}
+                  displayEmpty
+                  renderValue={(v) => v || <em>Selecciona un área</em>}
                   MenuProps={menuProps}
+                  sx={{ height: 56, fontSize: '1rem' }}
                 >
+                  <MenuItem disabled value="">
+                    <em>Selecciona un área</em>
+                  </MenuItem>
                   {areaList.map((area) => (
-                    <MenuItem key={area} value={area}>
+                    <MenuItem key={area} value={area} sx={{ fontSize: '1rem' }}>
                       {area}
                     </MenuItem>
                   ))}
@@ -132,7 +150,8 @@ export default function Dashboard() {
               </FormControl>
             </Grid>
 
-            <Grid xs={12} sm={6} md={6}>
+            {/* --- Fecha Inicio --- */}
+            <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
                 type="date"
@@ -140,10 +159,12 @@ export default function Dashboard() {
                 InputLabelProps={{ shrink: true }}
                 value={fechaInicio}
                 onChange={(e) => setFechaInicio(e.target.value)}
+                sx={{ height: 56 }}
               />
             </Grid>
 
-            <Grid xs={12} sm={6} md={6}>
+            {/* --- Fecha Fin --- */}
+            <Grid item xs={12} sm={6}>
               <TextField
                 fullWidth
                 type="date"
@@ -151,16 +172,20 @@ export default function Dashboard() {
                 InputLabelProps={{ shrink: true }}
                 value={fechaFin}
                 onChange={(e) => setFechaFin(e.target.value)}
+                sx={{ height: 56 }}
               />
             </Grid>
           </Grid>
         </Card>
       </Grid>
 
-      {/* Card de Gráfica */}
-      <Grid item xs={12} md={8}>
+      {/* ---------- Card de Gráfica ---------- */}
+      <Grid item xs={12}>
         {(selectedSensorId || selectedArea) && (
-          <Card sx={{ mt: 3, p: 2, borderRadius: 3, boxShadow: 3 }}>
+          <Card sx={{ mt: 4, p: 3, borderRadius: 3, boxShadow: 4 }}>
+            <Typography variant="h6" sx={{ mb: 2 }}>
+              Gráfica de Consumo
+            </Typography>
             <SensorApexChart
               selectedSensorId={selectedSensorId}
               fechaInicio={fechaInicio}
@@ -171,9 +196,9 @@ export default function Dashboard() {
         )}
       </Grid>
 
-      {/* Card de Tabla */}
-      <Grid item xs={12} md={4}>
-        <Card sx={{ mt: 3, p: 2, borderRadius: 3, boxShadow: 3 }}>
+      {/* ---------- Card de Estadísticas ---------- */}
+      <Grid item xs={12}>
+        <Card sx={{ mt: 4, p: 3, borderRadius: 3, boxShadow: 4 }}>
           <Typography variant="h6" sx={{ mb: 2 }}>
             Estadísticas de Promedio por Sensor
           </Typography>
@@ -181,15 +206,9 @@ export default function Dashboard() {
             <Table size="small">
               <TableHead>
                 <TableRow>
-                  <TableCell>
-                    <strong>Sensor</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Promedio Voltaje (V)</strong>
-                  </TableCell>
-                  <TableCell>
-                    <strong>Promedio Corriente (A)</strong>
-                  </TableCell>
+                  <TableCell><strong>Sensor</strong></TableCell>
+                  <TableCell><strong>Promedio Voltaje (V)</strong></TableCell>
+                  <TableCell><strong>Promedio Corriente (A)</strong></TableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
