@@ -123,7 +123,7 @@ export default function SensorApexChart({ selectedSensorId, selectedArea, fechaI
   }
 
   return (
-    <Box sx={{ mt: 4 }}>
+    <Box sx={{ mt: 6 }}>
       <Paper elevation={3} sx={{ p: 3, borderRadius: 2, backgroundColor: '#f9f9f9' }}>
         <Typography variant="h6" gutterBottom>
           Gráfica de Voltaje y Corriente
@@ -132,7 +132,8 @@ export default function SensorApexChart({ selectedSensorId, selectedArea, fechaI
           options={chartData.options}
           series={chartData.series}
           type="line"
-          height={380}
+          height={780}
+          width={780}
         />
       </Paper>
     </Box>
